@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseFilters } from '@nestjs/common';
 import mongoose from 'mongoose';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from 'src/domain/user/user.schemas';
 import { GenericExceptionFilter } from 'src/app/utils/filter/generic-exception.filter';
 import { UserEmptyException } from './exception/user-empty.exception';
@@ -31,5 +31,10 @@ export class UserController {
   @Delete(':id')
   deleteOneUser(@Param() params: string): Promise<any> {
     return this.userService.delete(new mongoose.Types.ObjectId(params));
+  }
+
+  @Patch(':id')
+  updateOneUser(@Param() params: string, @Body() updateUserDto: UpdateUserDto): Promise<any> {
+    return this.userService.update(new mongoose.Types.ObjectId(params), updateUserDto);
   }
 }

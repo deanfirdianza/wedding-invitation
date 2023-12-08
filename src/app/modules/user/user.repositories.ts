@@ -1,6 +1,6 @@
 import { Injectable} from '@nestjs/common';
-import { Document, Model, ModifyResult, Types } from 'mongoose';
-import { CreateUserDto } from './dto/user.dto';
+import { Document, FilterQuery, Model, ModifyResult, Types, UpdateWriteOpResult } from 'mongoose';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User, UserDocument } from 'src/domain/user/user.schemas';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -10,6 +10,11 @@ export class UserRepositories {
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     const createdUser = await this.userModel.create(createUserDto);
+    return createdUser;
+  }
+
+  async update(id: Types.ObjectId, updateUserDto: UpdateUserDto): Promise<FilterQuery<UserDocument>> {
+    const createdUser = await this.userModel.updateOne({ _id: id }, {name: updateUserDto?.name, email: updateUserDto?.email}).exec();
     return createdUser;
   }
 

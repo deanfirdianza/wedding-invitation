@@ -1,8 +1,8 @@
 import { Injectable, UseFilters } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { User, UserDocument } from 'src/domain/user/user.schemas';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { UserRepositories } from './user.repositories';
 import { GenericExceptionFilter } from 'src/app/utils/filter/generic-exception.filter';
 import { UserEmptyException } from './exception/user-empty.exception';
@@ -25,6 +25,13 @@ export class UserService {
     console.log("hashedPassword : ", hashedPassword);
     console.log(createUserDto);
     
+    return userObj;
+  }
+
+  async update(id: Types.ObjectId, updateUserDto: UpdateUserDto): Promise<FilterQuery<UserDocument>> {
+
+    let userObj = await this.userRepositories.update(id, updateUserDto)
+
     return userObj;
   }
 
