@@ -1,21 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from './app/modules/user/user.module';
-import { UsersService } from './app/modules/user/user.service';
-import { User, UserSchema } from './domain/user/user.schemas';
+import { UserModule } from './app/modules/user/user.module';
+import { AuthModule } from './app/modules/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+
 
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.development.env',
+    }),
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/wedding-invitation'),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    // UsersModule
+    UserModule,
+    AuthModule
   ],
-  controllers: [AppController],
-  providers: [
-    UsersService,
-  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

@@ -1,28 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseFilters } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { User } from 'src/domain/user/user.schemas';
+import { User, UserDocument } from 'src/domain/user/user.schemas';
 import { CreateUserDto } from './dto/user.dto';
+import { UserRepositories } from './user.repositories';
+import { GenericExceptionFilter } from 'src/app/utils/filter/generic-exception.filter';
+import { UserEmptyException } from './exception/user-empty.exception';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
-export class UsersService {
-  constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
+@UseFilters(GenericExceptionFilter)
+export class UserService {
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+    private readonly userRepositories: UserRepositories,
+    private readonly authService: AuthService,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = await this.userModel.create(createUserDto);
-    return createdUser;
+
+    let userObj = await this.userRepositories.create(createUserDto)
+
+    const hashedPassword = await this.authService.hashPassword(userObj._id, createUserDto.password)
+    console.log("hashedPassword : ", hashedPassword);
+    console.log(createUserDto);
+    
+    return userObj;
   }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+    return await this.userRepositories.findAll()
   }
 
   async findOne(id: Types.ObjectId): Promise<User|null> {
-    return this.userModel.findOne({ _id: id }).exec();
+    const userObject = await this.userRepositories.findOne(id)
+    if (userObject == null) {
+      throw new UserEmptyException();
+    }
+    
+    return userObject
   }
 
-//   async delete(id: string) {
-//     const deletedUser = await this.userModel.findByIdAndRemove({ _id: id }).exec();
-//     return deletedUser;
-//   }
+  async delete(id: Types.ObjectId): Promise<any> {
+    return await this.userRepositories.delete(id);
+  }
 }
