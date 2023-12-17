@@ -4,7 +4,6 @@ import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from 'src/domain/user/user.schemas';
 import { GenericExceptionFilter } from 'src/app/utils/filter/generic-exception.filter';
-import { UserEmptyException } from './exception/user-empty.exception';
 
 @Controller('users')
 // @UseFilters(GenericExceptionFilter)

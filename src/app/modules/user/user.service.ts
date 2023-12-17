@@ -5,8 +5,8 @@ import { User, UserDocument } from 'src/domain/user/user.schemas';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { UserRepositories } from './user.repositories';
 import { GenericExceptionFilter } from 'src/app/utils/filter/generic-exception.filter';
-import { UserEmptyException } from './exception/user-empty.exception';
 import { AuthService } from '../auth/auth.service';
+import { UserNotFoundException } from './exception/notfound.exception';
 
 @Injectable()
 @UseFilters(GenericExceptionFilter)
@@ -21,9 +21,7 @@ export class UserService {
 
     let userObj = await this.userRepositories.create(createUserDto)
 
-    const hashedPassword = await this.authService.hashPassword(userObj._id, createUserDto.password)
-    console.log("hashedPassword : ", hashedPassword);
-    console.log(createUserDto);
+    await this.authService.hashPassword(userObj._id, createUserDto.password)
     
     return userObj;
   }
@@ -42,7 +40,7 @@ export class UserService {
   async findOne(id: Types.ObjectId): Promise<User|null> {
     const userObject = await this.userRepositories.findOne(id)
     if (userObject == null) {
-      throw new UserEmptyException();
+      throw new UserNotFoundException();
     }
     
     return userObject
