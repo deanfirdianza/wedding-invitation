@@ -4,6 +4,7 @@ import { UserModule } from './app/modules/user/user.module';
 import { AuthModule } from './app/modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthMiddleware } from './app/utils/middleware/auth.middleware';
+import { InvitationModule } from './app/modules/invitation/invitation.module';
 
 
 
@@ -16,6 +17,7 @@ import { AuthMiddleware } from './app/utils/middleware/auth.middleware';
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/wedding-invitation'),
     UserModule,
     AuthModule,
+    InvitationModule
   ],
   controllers: [],
   providers: [],
